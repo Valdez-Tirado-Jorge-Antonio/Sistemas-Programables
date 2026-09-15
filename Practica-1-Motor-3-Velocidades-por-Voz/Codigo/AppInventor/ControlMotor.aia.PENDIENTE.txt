@@ -1,0 +1,4 @@
+PENDIENTE: exportar el proyecto ControlMotor desde MIT App Inventor y colocar aqui
+el archivo ControlMotor.aia. Despues, borrar este archivo.
+
+App Inventor: Proyectos -> Exportar proyecto seleccionado (.aia) a mi computadora
