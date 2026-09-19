@@ -68,7 +68,10 @@ comporta cuando se desborda (ver la sección de resultados).
 
 ## Diagrama del circuito
 
-<!-- PENDIENTE: foto del armado en la protoboard. Ver Diagrama/Readme.txt -->
+![Diagrama de conexiones en Tinkercad](Diagrama/diagrama-tinkercad.jpg)
+
+Diagrama hecho en Tinkercad: el pulsador va en la protoboard, una pata al **pin 2** y la
+otra a **GND**. No lleva resistencia porque el pin usa `INPUT_PULLUP`.
 
 ```
 Pin 2 ───[ pulsador ]─── GND        (INPUT_PULLUP: presionado = LOW)
@@ -126,7 +129,7 @@ descarta la pieza nueva y aumenta el contador `perdidas`, que sale en el reporte
 estado. Así se detecta si el buffer se quedó corto en vez de perder datos en silencio.
 
 ## Código
-[BufferCircularISR.ino](Codigo/BufferCircularISR/BufferCircularISR.ino)
+[BufferCircularISR.ino](Codigo/BufferCircularISR.ino)
 
 ### La ISR: lo mínimo posible
 
@@ -178,55 +181,74 @@ con el núcleo del UNO R4 y `renderBitmap()` con un arreglo `uint8_t[8][12]`.
 
 ### Salida del Monitor Serie (9600 baudios)
 
+Captura real de una sesión de 80 pulsaciones (se muestran las piezas 47 a 80). `t` es el
+`millis()` que anotó la ISR en el instante de la pulsación:
+
+![Monitor Serie: piezas 47 a 80](Terminal/monitor-serie-piezas-47-80.png)
+
 ```
-Buffer circular por interrupcion
-TAM_BUFFER = 8  (capacidad util 7)
-Pieza #1  t = 2314 ms
-Pieza #2  t = 2890 ms  (+576 ms)
-Pieza #3  t = 3102 ms  (+212 ms)
-[estado] piezas: 3  pendientes: 0/7  perdidas: 0
-Pieza #4  t = 6011 ms  (+2909 ms)
-Pieza #5  t = 6074 ms  (+63 ms)
-Pieza #6  t = 6140 ms  (+66 ms)
-[estado] piezas: 6  pendientes: 0/7  perdidas: 0
+Pieza 47  -  t = 107672 ms
+Pieza 48  -  t = 108063 ms   (+391 ms)
+Pieza 49  -  t = 108275 ms   (+212 ms)
+Pieza 50  -  t = 108476 ms   (+201 ms)
+Pieza 51  -  t = 108698 ms   (+222 ms)
+Pieza 52  -  t = 114559 ms   (+5861 ms)  <- pausa de 6 s, ninguna pieza fantasma
+...
+Pieza 73  -  t = 194491 ms
+Pieza 74  -  t = 197310 ms   (+2819 ms)
+Pieza 75  -  t = 197525 ms   (+215 ms)   <- rafaga: 7 pulsaciones en 1.4 s
+Pieza 76  -  t = 197823 ms   (+298 ms)
+Pieza 77  -  t = 198060 ms   (+237 ms)
+Pieza 78  -  t = 198273 ms   (+213 ms)
+Pieza 79  -  t = 198492 ms   (+219 ms)
+Pieza 80  -  t = 198692 ms   (+200 ms)
 ```
 
-El intervalo `(+N ms)` entre piezas es la diferencia entre los `millis()` que anotó la
-ISR, no entre los `Serial.print`: por eso mide el momento real en que pasó la pieza
-aunque el `loop()` la procese después.
+El intervalo entre piezas es la diferencia entre los `millis()` que anotó la ISR, no entre
+los `Serial.print`: por eso mide el momento real en que pasó la pieza aunque el `loop()`
+la procese después. En toda la captura la numeración avanza de uno en uno: ninguna
+pulsación se perdió ni se contó doble. Captura completa en [Terminal/](Terminal/Readme.txt).
 
 ## Video del funcionamiento
 
-[Readme](Video/Readme.txt)
+[![Ver en YouTube](https://img.youtube.com/vi/ujhbv712WJ4/hqdefault.jpg)](https://youtube.com/shorts/ujhbv712WJ4)
 
-<!-- PENDIENTE: enlace de YouTube. Conviene mostrar: la animacion corriendo, varias   -->
-<!-- pulsaciones lentas, una rafaga rapida (ver que la cuenta no se salta ninguna) y   -->
-<!-- el Monitor Serie al lado.                                                         -->
+**YouTube:** https://youtube.com/shorts/ujhbv712WJ4 · [Readme](Video/Readme.txt)
 
-## Evidencias de armado
+## Evidencias
 
-<!-- PENDIENTE: fotos del circuito armado. Ver Diagrama/Readme.txt -->
+| Diagrama (Tinkercad) | Monitor Serie |
+|---|---|
+| ![Tinkercad](Diagrama/diagrama-tinkercad.jpg) | ![Monitor Serie](Terminal/monitor-serie-piezas-47-80.png) |
 
 ## Reporte
-[Readme](Reporte/Readme.txt)
+[Reporte de la práctica — Buffer circular con ISR (PDF)](Reporte/Reporte-Buffer-Circular-ISR.pdf) · [qué contiene la carpeta](Reporte/Readme.txt)
 
-<!-- PENDIENTE: Reporte de la practica.pdf -->
+Incluye:
+- Datos generales, objetivo, tabla de conexiones, parámetros y procedimiento
+- Tabla de pruebas (pulsaciones lentas, pausas largas, ráfaga media, ráfaga rápida, rebote, desborde, animación)
+- Tabla de intervalos calculados a partir de la captura del Monitor Serie
+- Captura del Monitor Serie, observaciones, conclusiones y evidencias
 
 ## Conclusiones
 
-<!-- PENDIENTE: redactar. Puntos que conviene tocar:                                  -->
-<!-- - Por que un boton leido con digitalRead() en el loop() SI se puede perder cuando  -->
-<!--   el programa esta ocupado, y por que la interrupcion lo evita.                    -->
-<!-- - Regla de oro de la ISR: lo minimo posible. Que pasaria si se pone Serial.print   -->
-<!--   adentro.                                                                         -->
-<!-- - Como se resolvio lleno vs vacio (hueco sacrificado) y que otras opciones habia   -->
-<!--   (contador de elementos, bandera "lleno").                                        -->
-<!-- - Por que el antirrebote de la ISR es distinto al del loop().                      -->
-<!-- - Que se probo: pulsaciones lentas, rafaga rapida, y si se logro llenar el buffer  -->
-<!--   (contador perdidas > 0) con TAM_BUFFER = 8.                                      -->
-<!-- - volatile: que pasa si se quita.                                                  -->
+La interrupción externa resuelve un problema que el sondeo en el `loop()` no puede: atender un evento en el instante en que ocurre, sin importar qué esté haciendo el programa. Con un `loop()` ocupado dibujando la matriz, leer el pulsador con `digitalRead()` habría perdido pulsaciones cortas; con `attachInterrupt()` la ISR se ejecutó siempre, y la captura de 80 piezas consecutivas lo confirma.
+
+La regla de oro de la ISR es hacer lo mínimo: leer `millis()`, comparar, escribir en un arreglo y avanzar un índice. Todo lo lento (`Serial`, animación) se queda en el `loop()`. Si se pusiera un `Serial.print` dentro de la ISR, cada pulsación congelaría la animación varios milisegundos y, peor, `Serial` depende de interrupciones que están deshabilitadas mientras la ISR corre. Ese reparto es lo que permitió que la animación nunca se detuviera aunque se pulsara en ráfaga.
+
+El buffer circular es el punto de encuentro entre dos ritmos distintos: la ISR produce cuando quiere y el `loop()` consume cuando puede. Se resolvió lleno vs. vacío sacrificando un hueco (`(cabeza + 1) % TAM == cola` es lleno); las otras opciones —un contador de elementos o una bandera "lleno"— obligan a que ISR y `loop()` escriban la misma variable y entonces sí habría que bloquear interrupciones. Con un índice por dueño no hubo condiciones de carrera.
+
+El antirrebote dentro de una ISR es distinto al del `loop()`: no se puede esperar a que la señal se estabilice, así que se acepta el primer flanco y se ignoran los que lleguen en los siguientes 50 ms. Funcionó sin dobles conteos en ninguna de las ráfagas.
+
+Se probaron pulsaciones lentas, pausas de hasta 31 s y ráfagas de 7 pulsaciones en 1.4 s (una cada 200–300 ms). No se logró llenar el buffer a mano: el `loop()` lo vacía en microsegundos y `perdidas` se quedó en 0; el tamaño de 8 sirvió para verificar la lógica, no como límite real. `volatile` es obligatorio en todo lo compartido con la ISR: sin él el compilador puede optimizar la lectura de `cabeza` en el `while` y el `loop()` nunca vería las piezas nuevas.
 
 ## Resultados
-[Readme](Resultados/Readme.txt)
+[Resultados de la práctica — Buffer circular con ISR (PDF)](Resultados/Resultados-Buffer-Circular-ISR.pdf) · [qué contiene la carpeta](Resultados/Readme.txt)
 
-<!-- PENDIENTE: Resultados.pdf -->
+Resultados obtenidos en la práctica:
+
+- Contador de piezas por interrupción externa funcionando: 80 pulsaciones registradas sin saltos ni repeticiones
+- Ráfaga de 7 pulsaciones en 1.4 s (200–300 ms entre cada una) capturada completa por la ISR
+- Pausas de hasta 31 s sin ninguna pieza fantasma; antirrebote de 50 ms sin dobles conteos
+- Buffer circular de 8 lugares (7 útiles) con lógica lleno/vacío verificada; `perdidas = 0` en todas las pruebas
+- Animación en la matriz de 12×8 LEDs continua durante todas las pruebas, sin trabarse al pulsar

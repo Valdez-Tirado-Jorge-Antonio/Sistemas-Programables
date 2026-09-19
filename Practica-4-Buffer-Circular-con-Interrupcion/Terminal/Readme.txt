@@ -1,10 +1,10 @@
 Capturas del Monitor Serie (9600 baudios).
 
-Capturas esperadas:
-  1. Arranque: "Buffer circular por interrupcion" y "TAM_BUFFER = 8 (capacidad util 7)"
-  2. Pulsaciones lentas: lineas "Pieza #N  t = ... ms  (+... ms)" con intervalos grandes
-  3. Rafaga rapida: varias "Pieza #N" seguidas con intervalos de decenas de ms, sin
-     saltos en la numeracion
-  4. Un reporte "[estado] piezas: N  pendientes: 0/7  perdidas: 0"
+  monitor-serie-piezas-47-80.png  - Parte final de una sesion de 80 pulsaciones: lineas
+                                    "Pieza N - t = ... ms" con el millis() que anoto la ISR   [LISTO]
 
-PENDIENTE: faltan las capturas.
+Que se ve en la captura:
+  - Pulsaciones lentas (47-51, 52-54): una linea por pulsacion, numeracion de uno en uno
+  - Pausas largas (6 s, 31 s, 27 s): ninguna pieza fantasma
+  - Rafaga media (61-73): 13 pulsaciones en 5.7 s, intervalos de 300-700 ms
+  - Rafaga rapida (74-80): 7 pulsaciones en 1.4 s, intervalos de 200-300 ms, sin huecos

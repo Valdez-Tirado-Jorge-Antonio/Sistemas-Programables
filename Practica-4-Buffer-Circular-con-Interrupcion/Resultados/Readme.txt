@@ -1,13 +1,11 @@
 Resultados y evidencias de la practica.
 
-  Resultados.pdf  - Resultados obtenidos y observaciones
+  Resultados-Buffer-Circular-ISR.pdf  - Resultados obtenidos, tabla de pruebas, tabla de
+                                        intervalos, captura del Monitor Serie y evidencias   [LISTO]
 
-Pruebas que conviene documentar:
-  1. Pulsaciones lentas (1 por segundo): cada una sale como "Pieza #N" y perdidas = 0.
-  2. Rafaga rapida (lo mas rapido que se pueda): la cuenta no se salta ninguna y los
-     intervalos (+N ms) muestran el tiempo real entre pulsaciones.
-  3. Intentar llenar el buffer: con TAM_BUFFER = 8 (7 utiles) casi no se logra porque
-     el loop() lo vacia muy rapido; anotar si perdidas llego a ser > 0.
-  4. La animacion de la matriz no se detiene en ninguna de las pruebas.
-
-PENDIENTE: falta el PDF (se genera cuando la practica este armada y probada).
+Pruebas documentadas:
+  1. Pulsaciones lentas: cada una sale como "Pieza N", sin saltos.
+  2. Pausas largas (hasta 31 s): ninguna pieza fantasma.
+  3. Rafaga rapida (7 pulsaciones en 1.4 s): la cuenta no se salta ninguna; intervalos de 200-300 ms.
+  4. Llenar el buffer: no se logro a mano, el loop() lo vacia en microsegundos (perdidas = 0).
+  5. La animacion de la matriz no se detuvo en ninguna prueba.
